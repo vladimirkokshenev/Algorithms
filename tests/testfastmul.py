@@ -24,23 +24,78 @@ class TestSplit(unittest.TestCase):
     def test_len1(self):
         """ Testing split_big_integer() with single digit list"""
         arg = [1]
-        a, b = fastmul.split_big_integer(arg)
-        self.assertEqual(a, [])
+        a, b = fastmul.split_big_integer(arg, 1)
+        self.assertEqual(a, [0])
         self.assertEqual(b, [1])
 
     def test_len4(self):
         """ Testing split_big_integer() with list of len 4"""
         arg = [1, 2, 3, 4]
-        a, b = fastmul.split_big_integer(arg)
+        a, b = fastmul.split_big_integer(arg, 2)
         self.assertEqual(a, [1, 2])
         self.assertEqual(b, [3, 4])
 
     def test_len5(self):
         """ Testing split_big_integer() with list of len 5"""
         arg = [1, 2, 3, 4, 5]
-        a, b = fastmul.split_big_integer(arg)
-        self.assertEqual(a, [1, 2])
+        a, b = fastmul.split_big_integer(arg, 3)
+        self.assertEqual(a, [0, 1, 2])
         self.assertEqual(b, [3, 4, 5])
+
+
+class TestDrop(unittest.TestCase):
+    """Unit tests for drop_leading_zero()    """
+
+    def test_len1(self):
+        """ Testing drop_leading_zero() with single digit list"""
+        arg = [0]
+        res = fastmul.drop_leading_zero(arg)
+        self.assertEqual(res, [0])
+
+    def test_len2_drop(self):
+        """ Testing drop_leading_zero() with 2 digit list"""
+        arg = [0, 1]
+        res = fastmul.drop_leading_zero(arg)
+        self.assertEqual(res, [1])
+
+    def test_len2_nodrop(self):
+        """ Testing drop_leading_zero() with 2 digit list when no drop necessary"""
+        arg = [1, 1]
+        res = fastmul.drop_leading_zero(arg)
+        self.assertEqual(res, [1, 1])
+
+
+class TestSub(unittest.TestCase):
+    """Unit tests for sub_big_integers() """
+
+    def test_len1(self):
+        """Test single digit substraction"""
+        x = [8]
+        y = [5]
+        res = fastmul.sub_big_integers(x, y)
+        self.assertEqual(res, [3])
+
+    def test_len1_equal(self):
+        """Test single digit substraction"""
+        x = [8]
+        y = [8]
+        res = fastmul.sub_big_integers(x, y)
+        self.assertEqual(res, [0])
+
+    def test_len3(self):
+        """Test single digit substraction"""
+        x = [1, 4, 8]
+        y = [9, 9]
+        res = fastmul.sub_big_integers(x, y)
+        self.assertEqual(res, [4, 9])
+
+    def test_len4(self):
+        """Test single digit substraction"""
+        x = [9, 9, 9, 9]
+        y = [9, 9, 9, 0]
+        res = fastmul.sub_big_integers(x, y)
+        self.assertEqual(res, [9])
+
 
 class TestSum(unittest.TestCase):
     """Unit tests for sum_big_integers()    """

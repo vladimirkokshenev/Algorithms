@@ -13,21 +13,27 @@ def convert_string_to_big_integer(s):
     return arg
 
 
-def split_big_integer(arg):
+def split_big_integer(arg, n):
     """
     Take big integer in form of a list, and splits it into to integers of size len(arg)/2
     
     :param arg: list of integers
-    :return: a,b pair containing two lists of integers. a.append(b) is arg. 
+    :param n: number of high order digits to split (n<len(arg))
+    :return: a,b pair containing two lists of integers. a.append(b) = arg; len(a)=n; len(b)=len(arg)-n
     """
 
     a = []
     b = []
-
-    for i in range(len(arg)/2):
+    l = len(arg)
+    # left part of big number split
+    for i in range(0, l-n):
         a.append(arg[i])
-
-    for i in range(len(arg)/2, len(arg)):
+    # make the left part of size n (if it is smaller)
+    if l-n < n:
+        for i in range(2*n-l):
+            a.insert(0, 0)
+    # right part of big number split
+    for i in range(l-n, l):
         b.append(arg[i])
 
     return a, b
@@ -85,6 +91,40 @@ def shift_big_integer(a, n):
     return a
 
 
+def drop_leading_zero(arg):
+    """ Remove leading zeros from big integer arg
+    
+    :param arg: big integer in form of a list
+    :return: big integers with zeros removed
+    """
+
+    while len(arg) > 1 and arg[0] == 0:
+        arg.remove(0)
+    return arg
+
+
+def sub_big_integers(x, y):
+    """ Substract y from x. Note that x MUST BE greater than or equal y 
+    
+    :param x: arg x
+    :param y: arg y
+    :return: big integer corresponding to (x-y)
+    """
+
+    if len(y) < len(x):
+        for i in range(len(x)-len(y)):
+            y.insert(0, 0)
+
+    for i in range(len(x)-1, -1, -1):
+        x[i] = x[i] - y[i]
+        if x[i] < 0:
+            x[i-1] -= 1
+            x[i] += 10
+
+    x = drop_leading_zero(x)
+    return x
+
+
 def mul_big_integers(x, y):
     """ Multiplies two big integers and returns their product
     
@@ -112,28 +152,25 @@ def mul_big_integers(x, y):
     if len(y) == 1:
         return mul_big_integers(y, x)
 
-    # x = a*10^n1 + b
-    a, b = split_big_integer(x)
-    n1 = len(b)
-    # y = c*10^n2 + d
-    c, d = split_big_integer(y)
-    n2 = len(d)
+    # x = a*10^n + b
+    n = max(len(x), len(y))/2
+    a, b = split_big_integer(x, n)
+    # y = c*10^n + d
+    c, d = split_big_integer(y, n)
 
+    # get (1)
     ac = mul_big_integers(a, c)
-    ad = mul_big_integers(a, d)
-    bc = mul_big_integers(b, c)
+    # get (2)
     bd = mul_big_integers(b, d)
+    # get (3)
+    abcd = mul_big_integers(sum_big_integers(a, b), sum_big_integers(c, d))
 
-    res1 = shift_big_integer(ac, n1+n2)
-    res2 = shift_big_integer(ad, n1)
-    res3 = shift_big_integer(bc, n2)
+    res1 = shift_big_integer(list(ac), 2*n)
+    res2 = shift_big_integer(sub_big_integers(sub_big_integers(abcd, ac), list(bd)), n)
 
-    res4 = sum_big_integers(res1, res2)
-    res5 = sum_big_integers(res4, res3)
-
-    res = sum_big_integers(res5, bd)
-
-    return res
+    res = sum_big_integers(sum_big_integers(res1, res2), bd)
+    res_final = drop_leading_zero(res)
+    return res_final
 
 
 if __name__ == "__main__":
