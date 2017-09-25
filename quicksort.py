@@ -78,7 +78,6 @@ def quicksort(a, left_ind, right_ind, choose_pivot):
     :param left_ind: defines left edge of sublist (is inlcuded into sublist)
     :param right_ind: defins right edge of sublist (is included into sublist)
     :param choose_pivot: defines pivot selection function
-    :param comparisons: defines number of comparisons in quicksort
     :return: adjusted number of comparisons
     """
 
