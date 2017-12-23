@@ -1,6 +1,7 @@
 import numpy
 import random
 
+
 def read_cnf(filename):
     fp = open(filename)
 
